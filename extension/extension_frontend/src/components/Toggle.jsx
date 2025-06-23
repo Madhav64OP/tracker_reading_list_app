@@ -14,6 +14,12 @@ function Toggle() {
       });
       }
     }, []);
+
+    useEffect(()=>{
+        chrome?.storage?.local?.get(["content"],(result)=>{
+            console.log("Saved Content:",result.content);
+        })
+    },[])
     
 
     const toggleChange = (key,valueSetter,currVal)=>{
