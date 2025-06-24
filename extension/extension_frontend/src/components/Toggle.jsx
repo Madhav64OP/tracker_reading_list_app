@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Header from './Header';
 
 function Toggle() {
     const [yt, setYt] = useState(false);
@@ -30,6 +31,7 @@ function Toggle() {
 
     return (
         <>
+        <Header/>
             <div id="main-body" className='flex flex-col bg-black text-white w-[375px] h-[350px] overflow-auto pt-4'>
                 <div id="heading" className='flex flex-row justify-center items-baseline gap-2 py-3 px-4'>
                     <h1 className='text-xl font-medium text-black rounded-lg bg-red-500 py-2 px-3'>SocialME </h1>
