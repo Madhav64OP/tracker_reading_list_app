@@ -6,9 +6,7 @@ function Header() {
   const popupRef = useRef(null)
   const navigate = useNavigate();
 
-    const handleLogout = () => {
-    // Add your logout logic here (e.g., clearing tokens)
-    console.log('Logged out!');
+  const handleLogout = () => {
     navigate('/login');
   };
 
