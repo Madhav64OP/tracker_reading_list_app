@@ -11,9 +11,9 @@ function Login() {
                     Login
                 </div>
                 <div id="main-body" className='flex flex-col justify-center items-center gap-3 text-red-500'>
-                    <input type="text" placeholder='email' className='bg-gray-800 w-full placeholder:text-red-500 outline-none placeholder:opacity-60 py-1 px-3 rounded-lg' id='email' />
+                    <input type="text" placeholder='Email' className='bg-gray-800 w-full placeholder:text-red-500 outline-none placeholder:opacity-60 py-1 px-3 rounded-lg' id='email' />
                     <div id="password" className='bg-gray-800 rounded-lg w-full px-2 flex justify-center items-center'>
-                        <input type={isVisible?'text':'password'} className='bg-transparent outline-none py-1 placeholder:text-red-500 placeholder:opacity-60 px-1 rounded-lg' placeholder='password' id='pass' />
+                        <input type={isVisible?'text':'password'} className='bg-transparent outline-none py-1 placeholder:text-red-500 placeholder:opacity-60 px-1 rounded-lg' placeholder='Password' id='pass' />
                         <div id="eye" className='hover:opacity-50 transition-opacity duration-200 cursor-pointer'>
 
                         {!isVisible ?<i class="fa-solid fa-eye-slash" onClick={()=>setIsVisible(!isVisible)}></i> :<i class="fa-solid fa-eye" onClick={()=>setIsVisible(!isVisible)}></i>}
