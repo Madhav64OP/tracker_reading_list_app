@@ -3,6 +3,9 @@
     "name": "SocialME",
     "description":"This is assosicated with SocialME app is your feed manager/tracker",
     "version": "1.0.0",
+    "content_security_policy":{
+        "extension_pages":"script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
     "action":{
         "default_popup":"index.html"
     },
