@@ -20,7 +20,7 @@ function Login() {
             return
         }
 
-        axios.post('http://localhost:3000/login', { email: email, password: password })
+        axios.post('http://localhost:3000/login', { email: email, password: password },{withCredentials:true})
             .then(result => {
                 // console.log(result);
                 if (!result.data.sucess) {

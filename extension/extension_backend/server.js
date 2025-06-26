@@ -5,6 +5,8 @@ import mongoose from "mongoose"
 import connectDB from "./db/index.js"
 import cors from "cors"
 import { User } from "./models/user.models.js"
+import jwt from "jsonwebtoken"
+import cookieParser from "cookie-parser"
 
 dotenv.config({
   path: "./.env"
@@ -12,11 +14,15 @@ dotenv.config({
 
 const app = express()
 
+const JWT_Secret=process.env.JWT_SECRET
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN
+  origin: process.env.CORS_ORIGIN,
+  credentials:true
 }))
 
 app.use(express.json());
+app.use(cookieParser());
 
 connectDB()
   .then(() => {
@@ -58,13 +64,50 @@ app.post('/login', async (req, res) => {
       })
     }
 
+    const token=jwt.sign({
+      _id:user._id,
+      email:user.email
+    },JWT_Secret,{expiresIn:'1d'});
+
+    res.cookie('token',token,{
+      httpOnly:true,
+      secure:process.env.NODE_ENV === "production",
+      sameSite:'lax',
+      maxAge:24 * 60 * 60 * 1000 // 1 day
+    })
+
     return res.json({
       sucess: true,
-      message: "Welcome !!"
+      message: "Login Successful !!"
     })
 
   } catch (error) {
     console.error("Internal Server Error in Login", error);
     res.status(500).json({ sucess: false, message: "Internal Server Error" })
   }
+})
+
+app.get('/check-auth',(req,res)=>{
+  const token=req.cookies.token;
+  if(!token) return res.json({loggedIN:false});
+
+  try {
+    const user=jwt.verify(token,JWT_Secret);
+    res.json({
+      loggedIN:true,
+      email:user.email
+    })
+  } catch (error) {
+    console.error("Login Verification Error- ",error)
+    res.json({
+      loggedIN:false
+    })
+  }
+})
+
+app.post('/logout',(req,res)=>{
+  res.clearCookie('token');
+  res.json({
+    message:"Logged Out Sucessfully"
+  })
 })

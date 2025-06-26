@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -11,6 +11,19 @@ function SignUp() {
 
     const navigate = useNavigate()
 
+    useEffect(() => {
+      axios.get('http://localhost:3000/check-auth',{withCredentials:true})
+      .then(result=>{
+        if(result.data.loggedIN){
+            navigate("/main")
+        }
+      })
+      .catch(error=>{
+        console.error(error)
+      })
+    }, [])
+    
+
     const signUpHandler = (e) => {
         e.preventDefault()
 
@@ -22,7 +35,7 @@ function SignUp() {
             return
         }
 
-        axios.post('http://localhost:3000/register', { username: name, email: email, password: password })
+        axios.post('http://localhost:3000/register', { username: name, email: email, password: password },{withCredentials:true})
             .then(result => {
                 // console.log(result);
                 if (result.data.code === 11000 && result.data.code) {

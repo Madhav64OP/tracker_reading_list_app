@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react'
 import { Navigate, NavLink, useNavigate } from 'react-router-dom'
 
@@ -6,8 +7,13 @@ function Header() {
   const popupRef = useRef(null)
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:3000/logout', {}, { withCredentials: true })
+      navigate('/login');
+    } catch (error) {
+      console.error("logout-error ", error)
+    }
   };
 
   useEffect(() => {
@@ -32,8 +38,8 @@ function Header() {
         </div>
         <div id="user-wraper" className='relative'>
           <div id="user" className='text-red-500 text-lg hover:cursor-pointer bg-black flex justify-center items-center hover:opacity-55 transition-opacity duration-200' onClick={() => setShowLogout(!showLogout)}>
-          <i class="fa-solid fa-circle-user"></i>
-        </div>
+            <i class="fa-solid fa-circle-user"></i>
+          </div>
           {showLogout && (
             <div ref={popupRef} className='absolute top-8 right-0 bg-gray-700 text-red-500 rounded shadow-md p-1 w-24 text-sm z-10'>
               <button onClick={handleLogout} className='w-full text-left hover:bg-gray-200 px-2 py-1 rounded'>
