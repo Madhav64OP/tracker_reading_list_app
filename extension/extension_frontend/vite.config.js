@@ -12,6 +12,10 @@ export default defineConfig({
         {
           src: 'background.js',   
           dest: '.'               
+        },
+        {
+          src:'./node_modules/@mlc-ai/web-llm/dist/**',
+          dest:'.'
         }
       ]
     })

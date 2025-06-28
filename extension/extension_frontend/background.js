@@ -1,4 +1,19 @@
 import { nanoid } from "nanoid";
+import { ExtensionServiceWorkerMLCEngineHandler } from "@mlc-ai/web-llm";
+
+const handler = new ExtensionServiceWorkerMLCEngineHandler();
+
+self.addEventListener("install", () =>
+  console.log("✅ LLM Service Worker installed")
+);
+
+self.addEventListener("activate", () =>
+  console.log("✅ LLM Service Worker activated")
+);
+
+self.addEventListener("message", (event) => {
+  handler.onmessage(event);
+});
 
 chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
     chrome.tabs.get(details.tabId, (tab) => {

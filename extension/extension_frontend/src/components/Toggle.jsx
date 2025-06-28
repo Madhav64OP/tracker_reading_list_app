@@ -14,51 +14,83 @@ function Toggle() {
     // const summarize = useWebLLMSummarizer();
 
     //web-llm code
-    
+
+    // useEffect(() => {
+    //   if('serviceWorker' in navigator){
+    //     navigator.serviceWorker
+    //     .register('background.js',{type:'module'})
+    //     .then(()=>{
+    //         console.log("LLM Service Worker Registered")
+    //     })
+    //     .catch((error)=>{
+    //         console.error("Error while registering the llm service worker",error)
+    //     })
+    //   }
+    // }, [])
+
     useEffect(() => {
         const selectedModel = "gemma-2-2b-it-q4f16_1-MLC";
-        webllm.CreateMLCEngine(
+        webllm.CreateExtensionServiceWorkerMLCEngine(
             selectedModel,
             {
-            initProgressCallback: (initProgress) => {
-                console.log("initProgress",initProgress);
+                initProgressCallback: (initProgress) => {
+                    console.log("initProgress", initProgress);
+                }
             }
-        }).then(engine => {
-            setEngine(engine)
-        })
+        )
+            .then(engine => {
+                setEngine(engine);
+            })
+            .catch(error=>{
+                console.error("Error downloading/loading the LLM :",error)
+            })
     }, [])
 
-//     const generate = useCallback(async (data) => {
-//         if (!data || !engine) return;
-//         const engineeredPromt = `You're an intelligent summarizer for a productivity and learning platform.
 
-// Given only the title of a video or article, generate:
-// - a self-created short **label or title** that reflects the main theme of the content (but is not a copy of the original)
-// - a one-line **insight** that reflects the user’s interest or takeaway
-// - relevant **tags**
 
-// Return in JSON:
+    // useEffect(() => {
+    //     webllm.CreateMLCEngine(
+    //         selectedModel,
+    //         {
+    //         initProgressCallback: (initProgress) => {
+    //             console.log("initProgress",initProgress);
+    //         }
+    //     }).then(engine => {
+    //         setEngine(engine)
+    //     })
+    // }, [])
 
-// {
-//   "generatedTitle": "<short headline, 3–6 words>",
-//   "insight": "<reflective line about interest or takeaway>",
-//   "tags": ["...", "..."]
-// }
+    //     const generate = useCallback(async (data) => {
+    //         if (!data || !engine) return;
+    //         const engineeredPromt = `You're an intelligent summarizer for a productivity and learning platform.
 
-// If the input is vague like just "YouTube", return { "skip": true }
+    // Given only the title of a video or article, generate:
+    // - a self-created short **label or title** that reflects the main theme of the content (but is not a copy of the original)
+    // - a one-line **insight** that reflects the user’s interest or takeaway
+    // - relevant **tags**
 
-// Input:
-// Title: ${data.title}
-// `
-//         const reply = await engine.chat.completions.create({
-//             messages: [{ role: "user", content: engineeredPromt }],
-//             stream: false,
-//         });
-//         // setOutput(reply)
-//         console.log(reply);
-//         return reply.choices[0]?.message?.content || null;
-//     },[engine])
-    
+    // Return in JSON:
+
+    // {
+    //   "generatedTitle": "<short headline, 3–6 words>",
+    //   "insight": "<reflective line about interest or takeaway>",
+    //   "tags": ["...", "..."]
+    // }
+
+    // If the input is vague like just "YouTube", return { "skip": true }
+
+    // Input:
+    // Title: ${data.title}
+    // `
+    //         const reply = await engine.chat.completions.create({
+    //             messages: [{ role: "user", content: engineeredPromt }],
+    //             stream: false,
+    //         });
+    //         // setOutput(reply)
+    //         console.log(reply);
+    //         return reply.choices[0]?.message?.content || null;
+    //     },[engine])
+
 
     useEffect(() => {
         if (chrome?.storage?.sync) {
