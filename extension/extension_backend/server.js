@@ -111,3 +111,33 @@ app.post('/logout',(req,res)=>{
     message:"Logged Out Sucessfully"
   })
 })
+
+app.post('/set-summary',async (req,res)=>{
+  const token=req.cookies.token;
+  if(!token) return res.status(401).json({sucess:false,message:"Unauthorized"});
+  
+  try {
+    const decode=jwt.verify(token,JWT_Secret);
+    const user=await User.findById(decode._id);
+    
+    if(!user) res.send(401).json({sucess:false,message:"No User Found"});
+
+    const {generatedTitle,insight,tags,site}=req.body;
+    user.summaries.push({
+      generatedTitle,
+      insight,
+      tags,
+      site
+    });
+
+    await user.save();
+
+  } catch (error) {
+    console.error("Error making summaries with backend",error);
+    res.status(500).json({
+      sucess:false,
+      message:"Internal Server Error for Summaries"
+    })
+  }
+
+})

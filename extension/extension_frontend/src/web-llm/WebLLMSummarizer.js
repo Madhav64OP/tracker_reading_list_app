@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import * as webllm from "@mlc-ai/web-llm";
 
-export default function useWebLLMSummarizer(data) {
+export default function useWebLLMSummarizer() {
 
     const [engine, setEngine] = useState(null);
-    const [output, setOutput] = useState("")
+    // const [output, setOutput] = useState("")
 
     const selectedModel = "gemma-2-2b-it-q4f16_1-MLC";
 
@@ -15,12 +15,15 @@ export default function useWebLLMSummarizer(data) {
             }
         }).then(engine => {
             setEngine(engine)
+        }).catch(error => {
+            console.error(error)
         })
     }, [])
 
-    
-    const generate = async (data) => {
-        if (!data || !engine) return;
+
+    const generate = useCallback(async (data) => {
+        if (!data || !engine) return null;
+
         const engineeredPromt = `You're an intelligent summarizer for a productivity and learning platform.
 
 Given only the title of a video or article, generate:
@@ -31,33 +34,28 @@ Given only the title of a video or article, generate:
 Return in JSON:
 
 {
-  "generatedTitle": "<short headline, 3–6 words>",
-  "insight": "<reflective line about interest or takeaway>",
-  "tags": ["...", "..."]
+  generatedTitle: "<short headline, 3–6 words>",
+  insight: "<reflective line about interest or takeaway>",
+  tags: ["...", "..."]
 }
 
-If the input is vague like just "YouTube", return { "skip": true }
+If the input is vague like just "YouTube", return { skip: true }
 
 Input:
 Title: ${data.title}
 `
-        const reply = await engine.chat.completions.create({
-            messages: [{ role: "user", content: engineeredPromt }],
-            stream: false,
-        });
-        // setOutput(reply)
-        console.log(reply);
-        return reply.choices[0]?.message?.content || null;
-    }
-
-    // useEffect(() => {
-
-
-
-    // }, [engine, data]);
-
-
-
+        try {
+            const reply = await engine.chat.completions.create({
+                messages: [{ role: "user", content: engineeredPromt }],
+                stream: false,
+            });
+            console.log(reply)
+            return reply.choices[0]?.message?.content || null ;
+        } catch (error) {
+            console.error("Error during generation",error)
+            return null;
+        }
+    }, [engine])
 
     return generate;
 }

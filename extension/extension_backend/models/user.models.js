@@ -1,6 +1,25 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt"
 
+const userSummary=new Schema({
+    generatedTitle:{
+        type:String,
+    },
+    insight:{
+        type:String,
+    },
+    tags:{
+        type:[String],
+    },
+    site:{
+        type:String,
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now,
+    }
+},{_id:false});
+
 const userSchema=new Schema({
     username:{
         type:String,
@@ -19,7 +38,8 @@ const userSchema=new Schema({
     password:{
         type:String,
         required:[true,'Password is Required']
-    }
+    },
+    summaries:[userSummary],
 },{
     timestamps:true
 })

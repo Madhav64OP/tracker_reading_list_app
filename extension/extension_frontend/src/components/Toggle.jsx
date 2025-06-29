@@ -1,96 +1,74 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from './Header';
-import * as webllm from "@mlc-ai/web-llm";
-
-// import useWebLLMSummarizer from '../web-llm/WebLLMSummarizer';
+import axios from 'axios';
 
 function Toggle() {
     const [yt, setYt] = useState(false);
     const [articles, setArticles] = useState(false);
     const [others, setOthers] = useState(false);
     const [content, setContent] = useState([]);
-    const [engine, setEngine] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [summaries, setSummaries] = useState([])
 
-    // const summarize = useWebLLMSummarizer();
+    let contentToUse = null;
 
-    //web-llm code
-
-    // useEffect(() => {
-    //   if('serviceWorker' in navigator){
-    //     navigator.serviceWorker
-    //     .register('background.js',{type:'module'})
-    //     .then(()=>{
-    //         console.log("LLM Service Worker Registered")
-    //     })
-    //     .catch((error)=>{
-    //         console.error("Error while registering the llm service worker",error)
-    //     })
-    //   }
-    // }, [])
-
-    useEffect(() => {
-        const selectedModel = "gemma-2-2b-it-q4f16_1-MLC";
-        webllm.CreateExtensionServiceWorkerMLCEngine(
-            selectedModel,
-            {
-                initProgressCallback: (initProgress) => {
-                    console.log("initProgress", initProgress);
+    const handleSummarizeData = async () => {
+        console.log("Summary button clicked");
+        setIsLoading(true);
+        chrome?.storage?.local?.get(["content"], (result) => {
+            console.log("Saved Content:", result.content);
+            contentToUse = result.content;
+        })
+        for (const ct in contentToUse) {
+            chrome.runtime.sendMessage(
+                {
+                    type: "summarize",
+                    title: ct.title,
+                    site:ct.type
+                },
+                (response) => {
+                    setIsLoading(false);
+                    if (response.success) {
+                        const summs=[...summaries]
+                        const newSumm=summs.push({data:response.data,site:response.site})
+                        setSummaries(summs);
+                        sendSummariesToBackend(newSumm);
+                        console.log("Summary:", response.data);
+                        
+                    } else {
+                        console.error("Error:", response.error);
+                    }
                 }
-            }
-        )
-            .then(engine => {
-                setEngine(engine);
-            })
-            .catch(error=>{
-                console.error("Error downloading/loading the LLM :",error)
-            })
-    }, [])
+            );
+        }
+    }
 
+    const handleSummarizeTest=async()=>{
+         chrome.runtime.sendMessage(
+                {
+                    type: "summarize",
+                    title: "How to make a mern app",
+                    site:"youtube"
+                },
+                (response) => {
+                    setIsLoading(false);
+                    if (response.success) {
+                        console.log("Test Summary:", response.data);
+                        
+                    } else {
+                        console.error("Test Error:", response.error);
+                    }
+                }
+            );
+    }
 
-
-    // useEffect(() => {
-    //     webllm.CreateMLCEngine(
-    //         selectedModel,
-    //         {
-    //         initProgressCallback: (initProgress) => {
-    //             console.log("initProgress",initProgress);
-    //         }
-    //     }).then(engine => {
-    //         setEngine(engine)
-    //     })
-    // }, [])
-
-    //     const generate = useCallback(async (data) => {
-    //         if (!data || !engine) return;
-    //         const engineeredPromt = `You're an intelligent summarizer for a productivity and learning platform.
-
-    // Given only the title of a video or article, generate:
-    // - a self-created short **label or title** that reflects the main theme of the content (but is not a copy of the original)
-    // - a one-line **insight** that reflects the user’s interest or takeaway
-    // - relevant **tags**
-
-    // Return in JSON:
-
-    // {
-    //   "generatedTitle": "<short headline, 3–6 words>",
-    //   "insight": "<reflective line about interest or takeaway>",
-    //   "tags": ["...", "..."]
-    // }
-
-    // If the input is vague like just "YouTube", return { "skip": true }
-
-    // Input:
-    // Title: ${data.title}
-    // `
-    //         const reply = await engine.chat.completions.create({
-    //             messages: [{ role: "user", content: engineeredPromt }],
-    //             stream: false,
-    //         });
-    //         // setOutput(reply)
-    //         console.log(reply);
-    //         return reply.choices[0]?.message?.content || null;
-    //     },[engine])
-
+    const sendSummariesToBackend=async(data)=>{
+        try {
+            await axios.post("http://localhost:3000/",{data},{withCredentials:true});
+        } catch (error) {
+            console.error("error realted to sending req for sumamry",error)
+        }
+    }
 
     useEffect(() => {
         if (chrome?.storage?.sync) {
@@ -113,28 +91,6 @@ function Toggle() {
             }
         })
     }, [])
-
-    // useEffect(() => {
-    //     //   SummarizeWithLLM(content)
-    //     const summarizeAll = async () => {
-    //         for (const c of content) {
-    //             const output = await generate(c.title);
-    //             console.log("LLM Summary Output", output);
-    //         }
-    //     };
-    //     if (content.length > 0 && generate) {
-    //         summarizeAll()
-    //     }
-    // }, [content, generate]);
-
-    // const SummarizeWithLLM=(contents)=>{
-    //     for(let c in contents){
-    //         const output=useWebLLMSummarizer(c.title);
-    //         console.log(output);
-    //     }
-    // }
-
-
 
     const toggleChange = (key, valueSetter, currVal) => {
         const newVal = !currVal;
@@ -202,6 +158,19 @@ function Toggle() {
                 <div id="footer" className='flex justify-center items-center text-xs py-2 font-semibold space-x-2 gap-1'>
                     You can also check out your social feed at <p className='font-medium text-black rounded-sm bg-red-500 px-1'> SocialME</p> web app.
                 </div>
+                <div className='flex justify-center mt-4'>
+                    <button
+                        onClick={handleSummarizeTest}
+                        disabled={isLoading}
+                        className={`px-4 py-2 rounded-lg text-white transition-colors ${isLoading
+                            ? 'bg-gray-500 cursor-not-allowed'
+                            : 'bg-red-500 hover:bg-red-600'
+                            }`}
+                    >
+                        {isLoading ? 'Summarizing...' : 'Summarize Sample Title'}
+                    </button>
+                </div>
+
             </div>
         </>
     )

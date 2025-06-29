@@ -30,7 +30,7 @@ function Login() {
                     }, 2500)
                 }
                 else {
-                    navigate("/home")
+                    navigate("/main")
                 }
             }
             )

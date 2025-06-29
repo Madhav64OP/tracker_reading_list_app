@@ -66,7 +66,7 @@ function Profile() {
                         )}
                     </div>
                 </div>
-                <div id="sec-section" className='flex flex-row justify-center items-center gap-5'>
+                <div id="sec-section" className='flex flex-row justify-between items-center gap-5'>
                     <div id="profile-circle">
                         <div id="circle" className="aspect-square rounded-full bg-red-500 flex justify-center items-center w-[200px] h-[200px] text-6xl text-white font-bold ">
                             {myProfileData.name.split(' ').map(word => word[0]).join('').toUpperCase()}

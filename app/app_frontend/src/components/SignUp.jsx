@@ -15,7 +15,7 @@ function SignUp() {
       axios.get('http://localhost:3000/check-auth',{withCredentials:true})
       .then(result=>{
         if(result.data.loggedIN){
-            navigate("/home")
+            navigate("/main")
         }
       })
       .catch(error=>{
@@ -51,7 +51,7 @@ function SignUp() {
                     }, 2500)
                 }
                 else if (result.data.createdAt) {
-                    navigate("/home")
+                    navigate("/main")
                 }
             }
             )
