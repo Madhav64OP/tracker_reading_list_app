@@ -46,15 +46,17 @@ This app consisits of a **Chrome extension** as well as an **Web app**.
 
 4. The **WEB LLm** runs as according to the wish of the user, there is a **button** which says **summarize all**, so the user click on summarize whenever he feels to be. This **reduces the load** on the browser, as llm will be loaded according to the wish of the user.
 
-5. All of the **error hanlding** is done, so if user tries to sign in (if already have an account, password less than 8 characters, login password/details incorrect, response internal server(backend) error, webLLm error) all the errors have been taken into account **with proper** frontend **response**.
+5. The WEB-LLM code has been implemented with the help of **service-worker** in google chrome, named **background.js** in our case, which runs a ****js script in background context** of the chrome browser. So ****no API for LLM** is been used, the LLM , which is **Gemma-2-2b-it-q4f16_1-MLC**(which is a good yet light weight llm with 2 billion params) is runned **inside browser** only, **locally**(which the WEBLLM downloads files from Hugging face.).
 
-6. The **App/Platform/Cross-Platfrom Security** has been taken into consideration with the help of **bcrypt** module, which applies a **cryptographic algorithim** when saving/searching for user by its Id or password in the DataBase, along with the **JWT** which just **authenticates valid users** with a generated sceured token whose valididty is of 1days always which has been **implemented in every backend api end point**.
+6. All of the **error hanlding** is done, so if user tries to sign in (if already have an account, password less than 8 characters, login password/details incorrect, response internal server(backend) error, webLLm error) all the errors have been taken into account **with proper** frontend **response**.
 
-7. The Users can **not only securly watch their profile summary**, but also they could **search for other users feed**, just by typing in the search box in the Search Section. This makes the app **feel like** a **social media app** where people could browse the other person's current digital activity, not directly(obviosly as its against user privacy) but it **lets know the intrests of the user**.
+7. The **App/Platform/Cross-Platfrom Security** has been taken into consideration with the help of **bcrypt** module, which applies a **cryptographic algorithim** when saving/searching for user by its Id or password in the DataBase, along with the **JWT** which just **authenticates valid users** with a generated sceured token whose valididty is of 1days always which has been **implemented in every backend api end point**.
 
-8. **The UI design** along with the **React Router DOM** has made the app **more smooother**, just like a **single page applcation** without lags, in both extension as well as the app.
+8. The Users can **not only securly watch their profile summary**, but also they could **search for other users feed**, just by typing in the search box in the Search Section. This makes the app **feel like** a **social media app** where people could browse the other person's current digital activity, not directly(obviosly as its against user privacy) but it **lets know the intrests of the user**.
 
-9. And many necessary things are **managed** using the **enviorment variables** in the backend mainly with the help of **dotenv**.
+9. **The UI design** along with the **React Router DOM** has made the app **more smooother**, just like a **single page applcation** without lags, in both extension as well as the app.
+
+10. And many necessary things are **managed** using the **enviorment variables** in the backend mainly with the help of **dotenv**.
 
 > This list will never end, you could give a try yourself to the app.
 
