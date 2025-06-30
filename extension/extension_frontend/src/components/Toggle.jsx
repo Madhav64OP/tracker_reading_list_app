@@ -43,9 +43,9 @@ function Toggle() {
                         title: contentToUse[ct].title,
                         site: contentToUse[ct].type
                     })
-
+                    console.log("Content Type Check 1- ",contentToUse[ct].type)
                     if (response.success) {
-                        const newSumm = { data: response.data, site: contentToUse[ct].site };
+                        const newSumm = { data: response.data, site: contentToUse[ct].type };
                         const summs = [...summaries, newSumm];
                         console.log(`Summary Individual:${count}`, response.data);
                         setSummaries(summs);
@@ -72,11 +72,12 @@ function Toggle() {
     const sendSummariesToBackend = async (data) => {
         console.log("Summary Data Sent from frontend");
         try {
+            console.log("Content Type Check 2- ",data.site)
             const response=await axios.post("http://localhost:3000/set-summary", {
                 generatedTitle: data.data.generatedTitle,
                 insight: data.data.insight,
                 tags: data.data.tags,
-                site: data.data.site
+                site: data.site
             }, { withCredentials: true });
             if(response.success) console.log("Sent the individual data to backend")
         } catch (error) {
@@ -116,7 +117,7 @@ function Toggle() {
     return (
         <>
             <Header />
-            <div id="main-body" className='flex flex-col bg-black text-white w-[375px] h-[350px] overflow-auto pt-4'>
+            <div id="main-body" className='flex flex-col bg-black gap-2 text-white w-[375px] h-[350px] overflow-auto pt-4'>
                 <div id="heading" className='flex flex-row justify-center items-baseline gap-2 py-3 px-4'>
                     <h1 className='text-xl font-medium text-black rounded-lg bg-red-500 py-2 px-3'>SocialME </h1>
                     <p className='text-red-500 bg-black px-2 py-2 rounded-lg'>Extension</p>
@@ -154,7 +155,7 @@ function Toggle() {
                                     ></div>
                                 </div>
                             </div>
-                            <div id="Others" className='flex flex-row justify-center items-center gap-1 border-2 rounded-xl px-3  border-red-500'>
+                            {/* <div id="Others" className='flex flex-row justify-center items-center gap-1 border-2 rounded-xl px-3  border-red-500'>
                                 <span className='font-semibold'>Track Others</span>
                                 <div
                                     className={`w-14 h-8 scale-50 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300  ${others ? 'bg-red-500' : 'bg-white'
@@ -166,20 +167,20 @@ function Toggle() {
                                             }`}
                                     ></div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
                 <div id="footer" className='flex justify-center items-center text-xs py-2 font-semibold space-x-2 gap-1'>
-                    You can also check out your social feed at <p className='font-medium text-black rounded-sm bg-red-500 px-1'> SocialME</p> web app.
+                    Check out your social feed at <p className='font-medium text-black rounded-sm bg-red-500 px-1'> SocialME</p> web app.
                 </div>
-                <div className='flex justify-center mt-4'>
+                <div className='flex justify-center mt-2'>
                     <button
                         onClick={handleSummarizeData}
                         disabled={isLoading}
-                        className={`px-4 py-2 rounded-lg text-white transition-colors ${isLoading
-                            ? 'bg-gray-500 cursor-not-allowed'
-                            : 'bg-red-500 hover:bg-red-600'
+                        className={`px-2 py-1 rounded-lg text-black  font-bold  hover:opacity-60 transition-all duration-300 ${isLoading
+                            ? 'bg-gray-500 cursor-not-allowed '
+                            : 'bg-red-500 '
                             }`}
                     >
                         {isLoading ? 'Summarizing...' : 'Summarize All the Data'}

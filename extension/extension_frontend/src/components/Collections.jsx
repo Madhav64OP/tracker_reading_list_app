@@ -29,14 +29,20 @@ function Collections() {
     return (
         <>
             <Header />
-            <div id="main-collection" className='flex flex-col justify-center items-center bg-black'>
-                <div id="btn" className='bg-black justify-center items-center py-1 px-2'>
-                    <button className={`px-4 py-2 rounded-lg text-white transition-colors ${isLoading
-                        ? 'bg-gray-500 cursor-not-allowed'
-                        : 'bg-red-500 hover:bg-red-600'
-                        }`} onClick={handleDeleteChromeData}>Clear My Data</button>
+            <div id="main-collection" className='flex flex-col justify-center items-center w-[375px] h-[350px] bg-black'>
+                <div className='flex justify-center mt-2'>
+                    <button
+                        onClick={handleDeleteChromeData}
+                        disabled={isLoading}
+                        className={`px-2 py-1 rounded-lg text-black  font-bold  hover:opacity-60 transition-all duration-300 ${isLoading
+                            ? 'bg-gray-500 cursor-not-allowed '
+                            : 'bg-red-500 '
+                            }`}
+                    >
+                        {isLoading ? 'Cleaning...' : 'Clean All'}
+                    </button>
                 </div>
-                <div id="collections" className='flex flex-col justify-center items-center bg-black w-[375px] h-[350px] overflow-scroll'>
+                <div id="collections" className='flex flex-col justify-center items-center bg-black w-[375px] h-[350px] overflow-y-scroll text-wrap'>
                     {collections.map((item) => (
                         <div key={nanoid()} className='bg-black text-red-500 text-xs flex flex-row justify-center items-center'>
                             <div id="type" className='text-red-500 bg-black py-1 px-2 rounded-xl'>{(item.type)}</div>

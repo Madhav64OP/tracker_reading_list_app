@@ -10,6 +10,12 @@
         "service_worker":"background.js",
         "type":"module"
     },
+    "icons": {
+        "16": "socialME.png",
+        "32": "socialME.png",
+        "48": "socialME.png",
+        "128": "socialME.png"
+    },
     "permissions":[
         "scripting",
         "tabs", 

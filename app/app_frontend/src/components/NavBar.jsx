@@ -6,7 +6,7 @@ function NavBar() {
     <>
       <div id="main-nav" className='flex sticky top-0 w-full justify-between items-center flex-row bg-black text-red-500 px-3  z-50'>
         <div id="logo">
-          <NavLink to="/main" className='text-xl font-medium text-black rounded-lg bg-red-500 py-2 px-3'>SocialME </NavLink>
+          <NavLink to="/main" className='text-xl font-semibold text-black rounded-lg bg-red-500 py-2 px-3'>SocialME </NavLink>
         </div>
         <div id="contents" className='flex justify-center items-center gap-8 flex-row'>
           <div id="home" className='hover:opacity-55 transition-opacity duration-300 cursor-pointer text-2xl font-semibold'>

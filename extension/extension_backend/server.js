@@ -300,3 +300,32 @@ app.get('/user/:id', async (req, res) => {
     })
   }
 })
+
+app.get('/get-basic-details',async (req,res)=>{
+  try {
+    const token=req.cookies.token
+    const decode=jwt.verify(token,JWT_Secret);
+
+    const user = await User.findById(decode._id);
+    
+    if(!user) return res.status(401).json({
+      success:false,
+      message:"No User Found"
+    });
+
+    const basicData={
+      name:user.username,
+    }
+    res.status(200).json({
+      success:true,
+      data:basicData
+    })
+
+  } catch (error) {
+    console.error("Error getting basic user details ",error);
+    res.status(500).json({
+      success:false,
+      message:"Internal Server Error"
+    })
+  }
+})

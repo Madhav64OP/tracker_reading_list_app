@@ -6,6 +6,7 @@ function Header() {
   const [showLogout, setShowLogout] = useState(false);
   const popupRef = useRef(null)
   const navigate = useNavigate();
+  const [userDetails, setUserDetails] = useState(null)
 
   const handleLogout = async () => {
     try {
@@ -17,6 +18,23 @@ function Header() {
   };
 
   useEffect(() => {
+    const getBasicUserDetails=async()=>{
+    try {
+      const response=await axios.get("http://localhost:3000/get-basic-details",{withCredentials:true})
+      if(response.data.success){
+        setUserDetails({
+          name:response.data.data.name
+        });
+      }
+    } catch (error) {
+      console.log("Error getting basic user details",error);
+    }
+  }
+  getBasicUserDetails();
+  }, [navigate])
+  
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setShowLogout(false);
@@ -25,6 +43,7 @@ function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
   return (
     <>
       <div id="main-full-header" className='flex flex-row justify-between px-8 items-center gap-4 bg-black w-[375px] pt-3'>
@@ -41,8 +60,9 @@ function Header() {
             <i class="fa-solid fa-circle-user"></i>
           </div>
           {showLogout && (
-            <div ref={popupRef} className='absolute top-8 right-0 bg-gray-700 text-red-500 rounded shadow-md p-1 w-24 text-sm z-10'>
-              <button onClick={handleLogout} className='w-full text-left hover:bg-gray-200 px-2 py-1 rounded'>
+            <div ref={popupRef} className='absolute top-8 right-0 bg-gray-700 text-red-500 flex flex-col justify-center items-center rounded shadow-md p-1 w-24 text-sm z-10 px-2'>
+              <div className='text-white font-semibold justify-center text-center flex items-center' id='username'>{userDetails?.name}</div>
+              <button onClick={handleLogout} className='w-full text-center hover:bg-gray-200 px-2 py-1 rounded'>
                 Logout
               </button>
             </div>

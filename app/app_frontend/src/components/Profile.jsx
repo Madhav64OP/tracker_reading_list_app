@@ -48,12 +48,12 @@ function Profile() {
         <>
             <NavBar />
             <div id="main-body" className='text-red-500 gap-4 py-3 flex justify-center items-center flex-col'>
-                <i className="fa-solid fa-arrow-left text-3xl font-bold absolute top-[110px]  left-[110px] hover:opacity-55 transition-all duration-300 cursor-pointer" aria-label="Go back" onClick={() => (navigate(-1))}></i>
+                <i className="hidden md:block fa-solid fa-arrow-left text-3xl font-bold absolute top-[110px]  left-[110px] hover:opacity-55 transition-all duration-300 cursor-pointer" aria-label="Go back" onClick={() => (navigate(-1))}></i>
                 <div id="main-heading" className='flex justify-start w-full max-w-[1100px] animate-glowRed'>
-                    <h1 className='text-4xl'>My Profile</h1>
+                    <h1 className='text-2xl md:text-4xl'>My Profile</h1>
                 </div>
                 <div id="heading">
-                    <h1 className='text-white text-6xl font-bold'>Username: {myProfileData.name}</h1>
+                    <h1 className='text-white text-4xl md:text-6xl font-bold'>Username: {myProfileData.name}</h1>
                     {errorMsg && (
                         <h1 className='text-white text-6xl font-bold'>Error Getting the Details</h1>
                     )}
@@ -65,13 +65,13 @@ function Profile() {
                         <p className='text-red-500'>  {myProfileData.totalItems}</p>
                     </div>
                 </div>
-                <div id="sec-section" className='flex flex-row justify-between items-center gap-3 '>
+                <div id="sec-section" className='flex flex-row justify-between items-center gap-3 md:gap-10 px-6'>
                     <div id="profile-circle">
                         <div id="circle" className="aspect-square rounded-full bg-red-500 flex justify-center items-center w-[200px] h-[200px] text-base text-white font-bold ">
                             {myProfileData.name}
                         </div>
                     </div>
-                    <div id="my-feed" className='flex flex-row flex-wrap gap-4 justify-center items-center'>
+                    <div id="my-feed" className='flex flex-row flex-wrap gap-4 md:scale-100 scale-75 justify-center items-center'>
                         {myProfileData?.summarizedContent?.map((data) => (
                             <SummaryCard data={data} id={nanoid} />
                         ))}
@@ -79,16 +79,16 @@ function Profile() {
                 </div>
                 <div id="log-out-del" className='flex flex-row justify-center items-center gap-8'>
                     <div id="joined" className='flex flex-row justify-center items-center gap-3'>
-                        <h1 className='text-white text-lg font-bold'>Joined at :</h1>
+                        <h1 className='text-white text-lg font-bold'>Joined App at :</h1>
                         <h1> {new Date(myProfileData?.joinedAt).toDateString()}</h1>
                     </div>
                     <div id="essential-btns" className='flex flex-row justify-center items-center gap-3'>
                         <div id="log-out" className='text-red-500 bg-white py-1 px-2 rounded-lg font-semibold hover:opacity-55 transition-all duration-200 text-xl'>
-                            <button onClick={handleLogout}>Logout</button>
+                            <button onClick={handleLogout}>Logout App</button>
                         </div>
-                        <div id="delete-account" className='text-black bg-red-500 py-1 px-2 rounded-lg font-semibold hover:opacity-55 transition-all duration-200 text-xl'>
+                        {/* <div id="delete-account" className='text-black bg-red-500 py-1 px-2 rounded-lg font-semibold hover:opacity-55 transition-all duration-200 text-xl'>
                             <button>Delete Account</button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
