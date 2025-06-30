@@ -4,35 +4,13 @@ import { nanoid } from 'nanoid'
 import axios from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
+import { useEffect } from 'react';
 
 function Profile() {
-    const [myProfileData, setMyProfileData] = useState(
-        {
-            name: "Op Boi",
-            totalItems: 3,
-            types: ["youtube", "articles"],
-            joinedAt: "22/12/2000",
-            summarizedContent: [
-                {
-                    generatedTitle: "Building Autonomous Vehicles",
-                    insight: "Learn how ROS and AI come together to power self-driving vehicles.",
-                    tags: ["ROS", "Autonomous Vehicles", "AI", "Robotics", "Self-Driving Cars"]
-                },
-                {
-                    generatedTitle: "Create Social App with MERN",
-                    insight: "Understand the full-stack process of building a social media platform using MongoDB, Express, React, and Node.js.",
-                    tags: ["MERN", "Web Development", "Social Media App", "Full Stack", "React"]
-                },
-                {
-                    generatedTitle: "Transformers Explained from Scratch",
-                    insight: "Grasp the foundational architecture behind transformers by building it from the ground up.",
-                    tags: ["Transformers", "Deep Learning", "NLP", "AI Architecture", "Machine Learning"]
-                },
-            ]
-        }
-    )
+    const [myProfileData, setMyProfileData] = useState([])
+    const [errorMsg, setErrorMsg] = useState("")
 
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
     const handleLogout = async () => {
         try {
@@ -43,47 +21,74 @@ function Profile() {
         }
     };
 
+    useEffect(() => {
+        const getMyProfile = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/my-profile", { withCredentials: true });
+                if (response.data.success) {
+                    console.log(response.data.data)
+                    setMyProfileData(response.data.data);
+                }
+                else {
+                    setErrorMsg(response.data.message);
+                    setTimeout(() => {
+                        setErrorMsg("");
+                    }, 2500);
+                }
+            } catch (error) {
+                console.error("Error getting the profile data ", error)
+            }
+        }
+        getMyProfile()
+    }, [])
+
+    const date = new Date()
+
     return (
         <>
-        <NavBar/>
+            <NavBar />
             <div id="main-body" className='text-red-500 gap-4 py-3 flex justify-center items-center flex-col'>
+                <i className="fa-solid fa-arrow-left text-3xl font-bold absolute top-[110px]  left-[110px] hover:opacity-55 transition-all duration-300 cursor-pointer" aria-label="Go back" onClick={() => (navigate(-1))}></i>
+                <div id="main-heading" className='flex justify-start w-full max-w-[1100px] animate-glowRed'>
+                    <h1 className='text-4xl'>My Profile</h1>
+                </div>
                 <div id="heading">
-                    <h1 className='text-white text-6xl font-bold'>{myProfileData.name}</h1>
+                    <h1 className='text-white text-6xl font-bold'>Username: {myProfileData.name}</h1>
+                    {errorMsg && (
+                        <h1 className='text-white text-6xl font-bold'>Error Getting the Details</h1>
+                    )}
                 </div>
                 <div id="data" className='flex flex-row justify-between gap-3 items-center py-3'>
                     {/* <div id="username" className='text-white text-3xl font-bold'>{myProfileData.name}</div> */}
                     <div id="total-content" className='text-red-500 text-3xl flex flex-row justify-center items-center gap-2'>
-                        <p className='text-white'>Total :</p>
+                        <p className='text-white'>Total Items:</p>
                         <p className='text-red-500'>  {myProfileData.totalItems}</p>
                     </div>
-                    <div id="types" className='flex justify-center items-center flex-row gap-2'>
-                        <h1 className='text-3xl ml-3 text-white'>From :</h1>
-                        {myProfileData.types.includes("youtube") && (
-                            <div className='bg-black border-[1px] border-red-500 text-red-500 rounded-2xl px-1'>YouTube</div>
-                        )}
-                        {myProfileData.types.includes("articles") && (
-                            <div className='bg-yellow-300 border-[1px] border-white text-black rounded-2xl px-1'>Articles</div>
-                        )}
-                    </div>
                 </div>
-                <div id="sec-section" className='flex flex-row justify-between items-center gap-5'>
+                <div id="sec-section" className='flex flex-row justify-between items-center gap-3 '>
                     <div id="profile-circle">
-                        <div id="circle" className="aspect-square rounded-full bg-red-500 flex justify-center items-center w-[200px] h-[200px] text-6xl text-white font-bold ">
-                            {myProfileData.name.split(' ').map(word => word[0]).join('').toUpperCase()}
+                        <div id="circle" className="aspect-square rounded-full bg-red-500 flex justify-center items-center w-[200px] h-[200px] text-base text-white font-bold ">
+                            {myProfileData.name}
                         </div>
                     </div>
                     <div id="my-feed" className='flex flex-row flex-wrap gap-4 justify-center items-center'>
-                        {myProfileData.summarizedContent.map((data) => (
+                        {myProfileData?.summarizedContent?.map((data) => (
                             <SummaryCard data={data} id={nanoid} />
                         ))}
                     </div>
                 </div>
-                <div id="log-out-del" className='flex flex-row justify-center items-center gap-4'>
-                    <div id="log-out" className='text-red-500 bg-white py-1 px-2 rounded-lg font-semibold hover:opacity-55 transition-all duration-200 text-xl'>
-                        <button onClick={handleLogout}>Logout</button>
+                <div id="log-out-del" className='flex flex-row justify-center items-center gap-8'>
+                    <div id="joined" className='flex flex-row justify-center items-center gap-3'>
+                        <h1 className='text-white text-lg font-bold'>Joined at :</h1>
+                        <h1> {new Date(myProfileData?.joinedAt).toDateString()}</h1>
                     </div>
-                    <div id="delete-account" className='text-black bg-red-500 py-1 px-2 rounded-lg font-semibold hover:opacity-55 transition-all duration-200 text-xl'>
-                        <button>Delete Account</button>
+                    <div id="essential-btns" className='flex flex-row justify-center items-center gap-3'>
+                        <div id="log-out" className='text-red-500 bg-white py-1 px-2 rounded-lg font-semibold hover:opacity-55 transition-all duration-200 text-xl'>
+                            <button onClick={handleLogout}>Logout</button>
+                        </div>
+                        <div id="delete-account" className='text-black bg-red-500 py-1 px-2 rounded-lg font-semibold hover:opacity-55 transition-all duration-200 text-xl'>
+                            <button>Delete Account</button>
+                        </div>
                     </div>
                 </div>
             </div>

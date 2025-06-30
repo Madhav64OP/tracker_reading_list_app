@@ -33,7 +33,7 @@ async function handleSummarize(data) {
         throw new Error("No title provided");
     }
 
-    const currentEngine=await initializeEngine();
+    const currentEngine = await initializeEngine();
 
     const engineeredPrompt = `You're an intelligent summarizer for a productivity and learning platform.
 
@@ -41,6 +41,10 @@ Given only the title of a video or article, generate:
 - a self-created short **label or title** that reflects the main theme of the content (but is not a copy of the original)
 - a one-line **insight** that reflects the user's interest or takeaway
 - relevant **tags**
+Your response MUST be a valid **single-line JSON** object.
+Do NOT add any markdown or explanations.
+Just respond ONLY with valid JSON. No commentary.
+
 
 Return in JSON:
 
@@ -55,19 +59,23 @@ If the input is vague like just "YouTube", return { skip: true }
 Input:
 Title: ${data.title}
 `;
+    console.log("Sending prompt to engine...");
     const reply = await currentEngine.chat.completions.create({
-            messages: [{ role: "user", content: engineeredPrompt }],
-            stream: false,
-        });
-    
-    const content=reply.choices[0]?.message?.content;
-    if(!content) throw new Error("No response from the LLM model")
+        messages: [{ role: "user", content: engineeredPrompt }],
+        stream: false,
+    });
+    console.log("Recieving reply from engine...",reply);
+
+    const content = reply.choices[0]?.message?.content;
+    if (!content) throw new Error("No response from the LLM model")
     try {
-        return JSON.parse(content)
+
+        const cleaned=content.replace(/^```json\s*/i,'').replace(/^```\s*/i, '').replace(/```$/, '').trim()
+        return JSON.parse(cleaned)
         // return reply.choices[0]?.message?.content || null;
     } catch (error) {
         console.error("Error during generation:", error);
-        return {rawResponse:content,error:"Failed to parse JSON response"}
+        return { rawResponse: content, error: "Failed to parse JSON response" }
     }
 }
 
@@ -76,14 +84,33 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log("Received message:", request);
 
     if (request.type === "summarize") {
-        handleSummarize({ title: request.title })
-            .then(result => {
-                sendResponse({ success: true, data: result, site:request.site });
-            })
-            .catch(error => {
+        (async ()=>{
+            try {
+                const result= await handleSummarize({title:request.title});
+                sendResponse({
+                    success: true,
+                    data: result,
+                    site: request.site
+                });
+            } catch (error) {
                 console.error("Summarization failed:", error);
-                sendResponse({ success: false, error: error.message,site:request.site });
-            });
+                sendResponse({
+                    success: false,
+                    error: error.message,
+                    site: request.site
+                });
+            }
+        })();
+        // handleSummarize({ title: request.title })
+        //     .then(result => {
+        //         console.log("Sending response to frontend...");
+        //         sendResponse({ success: true, data: result, site: request.site });
+        //         console.log("Sent response.");
+        //     })
+        //     .catch(error => {
+        //         console.error("Summarization failed:", error);
+        //         sendResponse({ success: false, error: error.message, site: request.site });
+        //     });
 
         return true; // Required to keep the sendResponse async
     }

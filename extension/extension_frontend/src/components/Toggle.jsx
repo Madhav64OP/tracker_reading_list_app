@@ -12,62 +12,77 @@ function Toggle() {
 
     let contentToUse = null;
 
+    const sendMessagePromise = (message) => {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage(message, (response) => {
+                if (chrome.runtime.lastError) {
+                    reject(chrome.runtime.lastError)
+                }
+                else {
+                    resolve(response);
+                }
+            })
+        })
+    }
+
     const handleSummarizeData = async () => {
         console.log("Summary button clicked");
         setIsLoading(true);
-        chrome?.storage?.local?.get(["content"], (result) => {
-            console.log("Saved Content:", result.content);
-            contentToUse = result.content;
-        })
-        for (const ct in contentToUse) {
-            chrome.runtime.sendMessage(
-                {
-                    type: "summarize",
-                    title: ct.title,
-                    site:ct.type
-                },
-                (response) => {
-                    setIsLoading(false);
-                    if (response.success) {
-                        const summs=[...summaries]
-                        const newSumm=summs.push({data:response.data,site:response.site})
-                        setSummaries(summs);
-                        sendSummariesToBackend(newSumm);
-                        console.log("Summary:", response.data);
-                        
-                    } else {
-                        console.error("Error:", response.error);
-                    }
-                }
-            );
-        }
-    }
 
-    const handleSummarizeTest=async()=>{
-         chrome.runtime.sendMessage(
-                {
-                    type: "summarize",
-                    title: "How to make a mern app",
-                    site:"youtube"
-                },
-                (response) => {
-                    setIsLoading(false);
-                    if (response.success) {
-                        console.log("Test Summary:", response.data);
-                        
-                    } else {
-                        console.error("Test Error:", response.error);
-                    }
-                }
-            );
-    }
-
-    const sendSummariesToBackend=async(data)=>{
         try {
-            await axios.post("http://localhost:3000/",{data},{withCredentials:true});
+            chrome?.storage?.local?.get(["content"], (result) => {
+                console.log("Saved Content:", result.content);
+                contentToUse = result.content;
+                console.log("Got the contentToUSe from chrome")
+            });
+            let count = 1;
+            for (const ct in contentToUse) {
+                try {
+                    const response = await sendMessagePromise({
+                        type: "summarize",
+                        title: contentToUse[ct].title,
+                        site: contentToUse[ct].type
+                    })
+
+                    if (response.success) {
+                        const newSumm = { data: response.data, site: contentToUse[ct].site };
+                        const summs = [...summaries, newSumm];
+                        console.log(`Summary Individual:${count}`, response.data);
+                        setSummaries(summs);
+                        console.log("Sending data to backend now");
+                        await sendSummariesToBackend(newSumm);
+                        count++;
+                        console.log(`Data Managing done for ${count}`);
+                    } else {
+                        console.error("Error with individual:", response.error);
+                    }
+                } catch (error) {
+                    console.error("error with all data", error)
+                }
+            }
         } catch (error) {
-            console.error("error realted to sending req for sumamry",error)
+            console.error("error getting content from chrome storage", error)
+            return
         }
+
+        setIsLoading(false);
+        console.log("sent all the data to backend");
+    }
+
+    const sendSummariesToBackend = async (data) => {
+        console.log("Summary Data Sent from frontend");
+        try {
+            const response=await axios.post("http://localhost:3000/set-summary", {
+                generatedTitle: data.data.generatedTitle,
+                insight: data.data.insight,
+                tags: data.data.tags,
+                site: data.data.site
+            }, { withCredentials: true });
+            if(response.success) console.log("Sent the individual data to backend")
+        } catch (error) {
+            console.error("error realted to sending req for sumamry", error)
+        }
+        console.log("Backend work done for individual process now");
     }
 
     useEffect(() => {
@@ -160,14 +175,14 @@ function Toggle() {
                 </div>
                 <div className='flex justify-center mt-4'>
                     <button
-                        onClick={handleSummarizeTest}
+                        onClick={handleSummarizeData}
                         disabled={isLoading}
                         className={`px-4 py-2 rounded-lg text-white transition-colors ${isLoading
                             ? 'bg-gray-500 cursor-not-allowed'
                             : 'bg-red-500 hover:bg-red-600'
                             }`}
                     >
-                        {isLoading ? 'Summarizing...' : 'Summarize Sample Title'}
+                        {isLoading ? 'Summarizing...' : 'Summarize All the Data'}
                     </button>
                 </div>
 

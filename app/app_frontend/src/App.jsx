@@ -5,6 +5,7 @@ import Search from './components/Search'
 import Home from './components/Home'
 import { Outlet } from 'react-router-dom'
 import axios from 'axios'
+import OtherProfile from './components/OtherProfile'
 
 function App() {
   const [navbarOk, setNavbarOk] = useState(false)
@@ -27,6 +28,7 @@ function App() {
       <Outlet />
       {/* <Search/> */}
       {/* <Home/> */}
+      {/* <OtherProfile/> */}
     </>
   )
 }

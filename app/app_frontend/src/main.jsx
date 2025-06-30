@@ -8,6 +8,7 @@ import Home from './components/Home.jsx'
 import Profile from './components/Profile.jsx'
 import SignUp from './components/SignUp.jsx'
 import Login from '../../../extension/extension_frontend/src/components/Login.jsx'
+import OtherProfile from './components/OtherProfile.jsx'
 
 const router=createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +18,7 @@ const router=createBrowserRouter(
       <Route path="search" element={<Search/>}/>
       <Route path="main" element={<Home/>}/>
       <Route path="profile" element={<Profile/>}/>
+      <Route path="profile/:id" element={<OtherProfile/>}/>
     </Route>
   )
 )

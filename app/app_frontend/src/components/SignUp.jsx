@@ -38,20 +38,14 @@ function SignUp() {
         axios.post('http://localhost:3000/register', { username: name, email: email, password: password },{withCredentials:true})
             .then(result => {
                 console.log(result);
-                if (result.data.code === 11000 && result.data.code) {
-                    setErrorMsg("Accound Already Exist, Please Login In")
-                    setTimeout(() => {
-                        setErrorMsg("")
-                    }, 2500)
-                }
-                else if (result.data.errors) {
-                    setErrorMsg("All fields are required, please enter all")
-                    setTimeout(() => {
-                        setErrorMsg("")
-                    }, 2500)
-                }
-                else if (result.data.createdAt) {
+                if (result.data.success) {
                     navigate("/main")
+                }
+                else {
+                    setErrorMsg(result.data.message)
+                    setTimeout(() => {
+                        setErrorMsg("")
+                    }, 2500)
                 }
             }
             )
