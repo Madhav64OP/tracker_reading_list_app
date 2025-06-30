@@ -17,7 +17,7 @@ function SummaryCard({ data }) {
             {data.site==="youtube" && (
               <div className='bg-black border-[1px] border-red-500 text-red-500 rounded-2xl px-1'>YouTube</div>
             )}
-            {data.site==="articles" && (
+            {data.site==="article" && (
               <div className='bg-yellow-300 border-[1px] border-white text-black rounded-2xl px-1'>Articles</div>
             )}
           </div>
