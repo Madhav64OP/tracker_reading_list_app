@@ -59,7 +59,7 @@ function Search() {
                             <div id="username" className=''>{user.name}</div>
                             <div id="tags" className='  flex flex-row gap-3'>
                                 {user.type?.includes("youtube") && <div className='bg-black border-[1px] border-red-500 text-red-500 rounded-2xl px-1'>YouTube</div>}
-                                {user.type?.includes("articles") && <div className='bg-yellow-300 text-black rounded-2xl px-1'>Articles</div>}
+                                {user.type?.includes("article") && <div className='bg-yellow-300 text-black rounded-2xl px-1'>Articles</div>}
                             </div>
                         </div>
                     ))}

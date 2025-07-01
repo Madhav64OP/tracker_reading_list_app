@@ -4,7 +4,7 @@ import React from 'react'
 function SummaryCard({ data }) {
   return (
     <>
-      {data.generatedTitle && data.insight && data.tags && (
+      {data.generatedTitle && data.insight  &&  (
         <div id="main-card" className='w-[300px] h-[250px] bg-gray-800 text-white rounded-2xl px-4 py-4 w-250px h-350px max-w-[300px] max-h-[400px] overflow-hidden gap-3 flex justify-center items-center flex-col'>
         <div id="title" className='text-xl text-white font-bold'>{data.generatedTitle}</div>
         <div id="insghts" className='text-sm'>{data.insight}</div>
