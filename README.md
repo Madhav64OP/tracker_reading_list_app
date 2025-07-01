@@ -177,7 +177,7 @@ i.e  **MONGO_DB_URI=mongodb+srv//{you_username}<db_password>@cluster0.{some_char
 ### For setting other environment variables
 >PORT=3000
 
->MONGO_DB_URI=MONGO_DB_URI=mongodb+srv//{you_username}<db_password>@cluster0.{some_charaacters}.net
+>MONGO_DB_URI=mongodb+srv//{you_username}<db_password>@cluster0.{some_charaacters}.net (it will be something like that)
 
 >DB_NAME=trackerReadingListApp (you can also change its name.)
 
