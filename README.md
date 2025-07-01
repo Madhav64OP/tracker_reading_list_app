@@ -62,7 +62,7 @@ This app consists of a **Chrome extension** as well as an **Web app**.
 
 ## How to Run It Yourself
 Follow up on Below
-
+Make sure you have latest NodeJS version in your system. You can get it at the [NodeJs](https://nodejs.org/en/download) documentation
 ### Step-1
 This will clone the repository in your local pc
 ```
